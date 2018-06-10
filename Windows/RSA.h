@@ -7,8 +7,6 @@
 #define MIN_SIZE 3
 #include "BigDec.h"
 
-int RSA_secure_ON;
-
 typedef struct RSA_Keys_ {
 	
 	struct {
