@@ -4,9 +4,9 @@
 
 BigDec BigDec_div(BigDec number1, BigDec number2) {
 	
-	BigDec numberhlp,number3,x,q,pop,buff[2];
+	BigDec numberhlp,number3,x,q,pop;
 	size_t nb1_len,nb2_len,nb3_len;
-	char ans,negnmb1,negnmb2;
+	char ans,negnmb1,negnmb2,buff[2];
 	register int i,j,z,m;
 	
 	if(number1[0]=='-')
