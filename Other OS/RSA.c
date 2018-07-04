@@ -5,6 +5,14 @@
 #include "BigDec.h"
 #include "RSA.h"
 
+static void RSA_publicKey(BigDec *eAdress, BigDec *nAdress, BigDec *xAdress, size_t length);
+static void RSA_privateKey(BigDec *dAdress, BigDec x, BigDec e);
+static BigDec RSA_modInv(BigDec a, BigDec b);
+static BigDec RSA_checkPrime(BigDec number);
+static BigDec RSA_numGenerate(size_t length);
+static BigDec RSA_relPrimeNum(BigDec number);
+
+
 static BigDec RSA_modInv(BigDec a, BigDec b) {
 
 	uint16_t nm1_len,nm2_len;

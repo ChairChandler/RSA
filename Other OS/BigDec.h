@@ -13,10 +13,11 @@ BigDec BigDec_tradPow(BigDec base, unsigned long long exp);
 BigDec BigDec_powRes(BigDec base, unsigned long long exp);
 BigDec BigDec_mod(BigDec number1, BigDec number2);
 inline int BigDec_max(BigDec number1, BigDec number2);
-inline BigDec BigDec_delZeroes(BigDec number1, size_t length);
+static inline BigDec BigDec_delZeroes(BigDec number1, size_t length);
 BigDec BigDec_gcd(BigDec number1, BigDec number2);
 BigDec BigDec_fgcd(BigDec number1, BigDec number2);
 BigDec BigDec_genrfn(BigDec number);
+static BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod);
 BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod);
 
 
@@ -45,7 +46,7 @@ inline int BigDec_max(BigDec number1, BigDec number2) { //0-number1<number2 1-nu
 	return 1;
 }
 
-inline BigDec BigDec_delZeroes(BigDec number, size_t length) {
+static inline BigDec BigDec_delZeroes(BigDec number, size_t length) {
 	
 	BigDec hlptr;
 	int i;

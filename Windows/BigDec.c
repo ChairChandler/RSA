@@ -628,7 +628,7 @@ BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod) {
 	
 	if(strcmp(exp,"1")==0)
 	{
-		return number;
+		return BigDec_mod(number,mod);
 	}
 	else if(strcmp(BigDec_mod(exp,"2"),"0")==0)
 	{

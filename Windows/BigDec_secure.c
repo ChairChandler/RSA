@@ -4,6 +4,8 @@
 #include "BigDec_secure.h"
 char secure=0;
 
+static void* BigDec_secureThread(void *arg);
+
 static void* BigDec_secureThread(void *arg) {
 	
 	MEMORYSTATUSEX statex;
