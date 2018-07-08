@@ -9,6 +9,12 @@ BigDec BigDec_div(BigDec number1, BigDec number2) {
 	char ans,negnmb1,negnmb2,buff[2];
 	register int i,j,z,m;
 	
+	if(strcmp(number2,"0")==0)
+	{
+		fprintf(stderr,"[ERROR] Division by 0.");
+		return NULL;
+	}
+	
 	if(number1[0]=='-')
 	{
 		negnmb1=1;
@@ -388,7 +394,7 @@ BigDec BigDec_pow(BigDec base, unsigned long long exp) {
 		base=numberhlp;
 		numberhlp=BigDec_powRes(base,exp);
 		free(base);
-		baseLeng=strlen(numberhlp);
+		baseLeng=strlen(numberhlp)+1;
 		
 		if(exp%2==1)
 		baseLeng++;
