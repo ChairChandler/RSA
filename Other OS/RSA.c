@@ -86,9 +86,13 @@ static BigDec RSA_modInv(BigDec a, BigDec b) {
 static BigDec RSA_checkPrime(BigDec number) {
 	
 	FILE *pPipe;
-	char buff[MAX_DIGITS+1],arg[]="Prime.py ";
+	char buff[MAX_DIGITS+1],*arg;
 	
-	strcat(arg,number);
+	arg=(char*)malloc((10+strlen(number))*sizeof(char));
+	memset(arg,'\0',10+strlen(number));
+	strncat(arg,"Prime.py ",9);
+	strncat(arg,number,strlen(number));
+	
 	pPipe=popen(arg,"r");
 	fgets(buff,MAX_DIGITS,pPipe);
 	fgets(buff,MAX_DIGITS,pPipe);
@@ -98,6 +102,7 @@ static BigDec RSA_checkPrime(BigDec number) {
 	number=(BigDec)malloc((strlen(buff)-1) * sizeof(char));
 	memcpy(number,buff+1,strlen(buff)-2);
 	
+	free(arg);
 	return number;
 
 }

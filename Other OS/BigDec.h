@@ -64,7 +64,7 @@ static inline BigDec BigDec_delZeroes(BigDec number, size_t length) {
 	if(strcmp(number,"")==0)
 	{
 		free(number);
-		number=(C_BigDec)malloc(2*sizeof(char));
+		number=(BigDec)malloc(2*sizeof(char));
 		number[0]='0';
 		number[1]='\0';
 	}

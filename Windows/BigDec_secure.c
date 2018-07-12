@@ -1,8 +1,9 @@
 #include <windows.h>
 #include <pthread.h>
+#include <stdio.h>
 #define DIV 1048576
 #include "BigDec_secure.h"
-char secure=0;
+static char secure=0;
 
 static void* BigDec_secureThread(void *arg);
 
