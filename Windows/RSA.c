@@ -98,9 +98,14 @@ static BigDec RSA_checkPrime(BigDec number) {
 	fgets(buff,MAX_DIGITS,pPipe);
 	pclose(pPipe);
 	
+	int i=1;
+	while(buff[i]=='-'||(buff[i]>='0'&&buff[i]<='9'))
+	i++;
+	
 	free(number);
-	number=(BigDec)malloc((strlen(buff)-1) * sizeof(char));
-	memcpy(number,buff+1,strlen(buff)-2);
+	number=(BigDec)malloc((i) * sizeof(char));
+	memcpy(number,buff+1,i-1);
+	number[i-1]='\0';
 	
 	free(arg);
 	return number;
