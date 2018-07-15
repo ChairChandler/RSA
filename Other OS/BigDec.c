@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <string.h>
-#include "BigDec.h"
 
-BigDec BigDec_div(BigDec number1, BigDec number2) {
+C_BigDec BigDec_div(C_BigDec number1, C_BigDec number2) {
 	
-	BigDec numberhlp,number3,x,q,pop;
+	C_BigDec numberhlp,number3,x,aux,q,pop;
 	size_t nb1_len,nb2_len,nb3_len;
 	char ans,negnmb1,negnmb2,buff[2];
 	register int i,j,z,m;
+	
+	pop=NULL;
 	
 	if(strcmp(number2,"0")==0)
 	{
@@ -35,21 +36,21 @@ BigDec BigDec_div(BigDec number1, BigDec number2) {
 	ans=BigDec_max(number1,number2);
 	if(ans==0)
 	{
-		numberhlp=(BigDec)malloc(2*sizeof(char));
+		numberhlp=(C_BigDec)malloc(2*sizeof(char));
 		numberhlp[0]='0';
 		numberhlp[1]='\0';
 		return numberhlp;
 	}
 	else if(ans==1&&!negnmb1^negnmb2)
 	{
-		numberhlp=(BigDec)malloc(2*sizeof(char));
+		numberhlp=(C_BigDec)malloc(2*sizeof(char));
 		numberhlp[0]='1';
 		numberhlp[1]='\0';
 		return numberhlp;
 	}
 	else if(ans==1)
 	{
-		numberhlp=(BigDec)malloc(3*sizeof(char));
+		numberhlp=(C_BigDec)malloc(3*sizeof(char));
 		numberhlp[0]='-';
 		numberhlp[1]='1';
 		numberhlp[2]='\0';
@@ -60,8 +61,8 @@ BigDec BigDec_div(BigDec number1, BigDec number2) {
 	nb2_len=strlen(number2);
 	nb3_len=nb1_len;
 	
-	numberhlp=(BigDec)malloc((nb2_len+1)*sizeof(char));
-	number3=(BigDec)malloc((nb3_len+1)*sizeof(char));
+	numberhlp=(C_BigDec)malloc((nb2_len+1)*sizeof(char));
+	number3=(C_BigDec)malloc((nb3_len+1)*sizeof(char));
 	
 	memset(number3,'0',nb3_len);
 	number3[nb3_len]='\0';
@@ -93,35 +94,50 @@ BigDec BigDec_div(BigDec number1, BigDec number2) {
 			if(BigDec_max(numberhlp,q)==1)
 			{
 				number3[i]=z+'0';
+				free(q);
 				j=0;
 				break;
 			}
 			else if(z==9&&BigDec_max(numberhlp,q)==2)
 			{
 				number3[i]=z+'0';
+				aux=q;
 				q=BigDec_sub(numberhlp,q);
+				free(aux);
 				memcpy(numberhlp,q,strlen(q));
 				j=strlen(q);
 			}
 			else if(z>1&&BigDec_max(numberhlp,pop)==2&&BigDec_max(numberhlp,q)==0)
 			{
 				number3[i]=(z-1)+'0';
+				aux=q;
 				q=BigDec_sub(numberhlp,pop);
+				free(aux);
 				memcpy(numberhlp,q,strlen(q));
 				j=strlen(q);
+				free(q);
 				break;	
 			}
+			
+			if(pop!=NULL)
+				free(pop);
+			
 			pop=q;
 		}
 		
 	}
 	
+	if(pop!=NULL)
+		free(pop);
+	free(numberhlp);
+	
 	number3=BigDec_delZeroes(number3,nb3_len);
 	
 	if(negnmb1^negnmb2)
 	{
-		number1=(BigDec)malloc((strlen(number3)+2)*sizeof(char));
+		number1=(C_BigDec)malloc((strlen(number3)+2)*sizeof(char));
 		memcpy(number1+1,number3,strlen(number3)+1);
+		free(number3);
 		number1[0]='-';
 		number3=number1;
 	}
@@ -130,9 +146,9 @@ BigDec BigDec_div(BigDec number1, BigDec number2) {
 	
 }
 
-BigDec BigDec_add(BigDec number1, BigDec number2) {
+C_BigDec BigDec_add(C_BigDec number1, C_BigDec number2) {
 	
-	BigDec ptrhlp,number3,fixnumber3;
+	C_BigDec ptrhlp,number3,fixnumber3;
 	char eq,negnmb;
 	int i,j;
 	negnmb=0;
@@ -169,7 +185,7 @@ BigDec BigDec_add(BigDec number1, BigDec number2) {
 		nb1_len^=nb2_len;
 	}
 	
-	number3=(BigDec)malloc((nb1_len+2)*sizeof(char));
+	number3=(C_BigDec)malloc((nb1_len+2)*sizeof(char));
 	number3[nb1_len+1]='\0';
 	eq=0;
 
@@ -193,7 +209,7 @@ BigDec BigDec_add(BigDec number1, BigDec number2) {
 	
 	if(negnmb)
 	{
-		number1=(BigDec)malloc((strlen(number3)+2)*sizeof(char));
+		number1=(C_BigDec)malloc((strlen(number3)+2)*sizeof(char));
 		memcpy(number1+1,number3,strlen(number3)+1);
 		number1[0]='-';
 		number3=number1;
@@ -201,9 +217,9 @@ BigDec BigDec_add(BigDec number1, BigDec number2) {
 	return number3;
 }
 
-BigDec BigDec_sub(BigDec number1, BigDec number2) {
+C_BigDec BigDec_sub(C_BigDec number1, C_BigDec number2) {
 
-	BigDec ptrhlp,number3;
+	C_BigDec ptrhlp,number3;
 	size_t nb1_len,nb2_len,nb3_len;
 	register int i,j,z;
 	char negnmb,eq,rest,negnmb1,negnmb2;
@@ -237,7 +253,7 @@ BigDec BigDec_sub(BigDec number1, BigDec number2) {
 	else if(negnmb1==1&&negnmb2==0)
 	{
 		ptrhlp=BigDec_add(number1,number2);
-		number1=(BigDec)malloc((strlen(ptrhlp)+2)*sizeof(char));
+		number1=(C_BigDec)malloc((strlen(ptrhlp)+2)*sizeof(char));
 		memcpy(number1+1,ptrhlp,strlen(ptrhlp)+1);
 		number1[0]='-';
 		return number1;		
@@ -283,7 +299,7 @@ BigDec BigDec_sub(BigDec number1, BigDec number2) {
 	}
 
 
-		number3=(BigDec)malloc((nb1_len+1)*sizeof(char));
+		number3=(C_BigDec)malloc((nb1_len+1)*sizeof(char));
 		number3[nb1_len]='\0';
 		z=nb1_len-1;
 
@@ -314,7 +330,7 @@ BigDec BigDec_sub(BigDec number1, BigDec number2) {
 	
 	if(negnmb)
 	{
-		number1=(BigDec)malloc((strlen(number3)+2)*sizeof(char));
+		number1=(C_BigDec)malloc((strlen(number3)+2)*sizeof(char));
 		memcpy(number1+1,number3,strlen(number3)+1);
 		number1[0]='-';
 		number3=number1;
@@ -323,13 +339,13 @@ BigDec BigDec_sub(BigDec number1, BigDec number2) {
 	return number3;
 }
 
-BigDec BigDec_tradPow(BigDec base, unsigned long long exp) {
+C_BigDec BigDec_tradPow(C_BigDec base, unsigned long long exp) {
 	
-	BigDec sum,hlptr;
+	C_BigDec sum,hlptr;
 	int i,j;
 	i=2;
 	
-	hlptr=(BigDec)malloc((strlen(base)+1)*sizeof(char));
+	hlptr=(C_BigDec)malloc((strlen(base)+1)*sizeof(char));
 	memcpy(hlptr,base,strlen(base)+1);
 	
 	while(i<=exp)
@@ -350,19 +366,19 @@ BigDec BigDec_tradPow(BigDec base, unsigned long long exp) {
 	
 }
 
-BigDec BigDec_powRes(BigDec base, unsigned long long exp) {
+C_BigDec BigDec_powRes(C_BigDec base, unsigned long long exp) {
 	
 	if(exp==0)
 	{
-		BigDec a;
-		a=(BigDec)malloc(2*sizeof(char));
+		C_BigDec a;
+		a=(C_BigDec)malloc(2*sizeof(char));
 		a[0]='1';
 		a[1]='\0';
 		return a;
 	}
 	else if(exp%2==0)
 	{
-		BigDec a,b;
+		C_BigDec a,b;
 		size_t length;
 		a=BigDec_powRes(base,exp/2);	
 		b=BigDec_mul(a,a);
@@ -371,7 +387,7 @@ BigDec BigDec_powRes(BigDec base, unsigned long long exp) {
 	}
 	else
 	{
-		BigDec a,b;
+		C_BigDec a,b;
 		size_t length;
 		a=BigDec_powRes(base,exp-1);	
 		b=BigDec_mul(a,base);
@@ -381,15 +397,15 @@ BigDec BigDec_powRes(BigDec base, unsigned long long exp) {
 		
 }
 
-BigDec BigDec_pow(BigDec base, unsigned long long exp) {
+C_BigDec BigDec_pow(C_BigDec base, unsigned long long exp) {
 		
-	BigDec numberhlp;
+	C_BigDec numberhlp;
 	
 	if(base[0]=='-')
 	{
 		int baseLeng;
 		baseLeng=strlen(base);
-		numberhlp=(BigDec)malloc(baseLeng*sizeof(char));
+		numberhlp=(C_BigDec)malloc(baseLeng*sizeof(char));
 		memcpy(numberhlp,base+1,baseLeng);
 		base=numberhlp;
 		numberhlp=BigDec_powRes(base,exp);
@@ -399,7 +415,7 @@ BigDec BigDec_pow(BigDec base, unsigned long long exp) {
 		if(exp%2==1)
 		baseLeng++;
 		
-		base=(BigDec)malloc(baseLeng*sizeof(char));
+		base=(C_BigDec)malloc(baseLeng*sizeof(char));
 		
 		if(exp%2==1)
 		{
@@ -415,9 +431,9 @@ BigDec BigDec_pow(BigDec base, unsigned long long exp) {
 		return BigDec_powRes(base,exp);
 }
 
-BigDec BigDec_mul(BigDec number1, BigDec number2) {
+C_BigDec BigDec_mul(C_BigDec number1, C_BigDec number2) {
 	
-	BigDec number3,ptrhlp;
+	C_BigDec number3,ptrhlp;
 	size_t nb1_len,nb2_len,nb3_len,lastNr1,lastNr2,lastNr3;
 	int i,j,eq;
 	char negnmb;
@@ -459,7 +475,7 @@ BigDec BigDec_mul(BigDec number1, BigDec number2) {
 		nb1_len^=nb2_len;
 	}
 	
-	number3=(BigDec)malloc((nb3_len+1+negnmb)*sizeof(char));
+	number3=(C_BigDec)malloc((nb3_len+1+negnmb)*sizeof(char));
 	number3[nb3_len+negnmb]='\0';
 	
 	for(i=0;i<nb3_len;i++)
@@ -498,7 +514,7 @@ BigDec BigDec_mul(BigDec number1, BigDec number2) {
 		number3[0]='-';
 		else
 		{
-			number1=(BigDec)malloc((nb3_len+2)*sizeof(char));
+			number1=(C_BigDec)malloc((nb3_len+2)*sizeof(char));
 			memcpy(number1+1,number3,nb3_len+1);
 			free(number3);
 			number1[0]='-';
@@ -509,23 +525,23 @@ BigDec BigDec_mul(BigDec number1, BigDec number2) {
 	return number3;	
 }
 
-BigDec BigDec_mod(BigDec number1, BigDec number2) {
+C_BigDec BigDec_mod(C_BigDec number1, C_BigDec number2) {
 	
 	char ans;
-	BigDec rem,res,pom;
+	C_BigDec rem,res,pom;
 	size_t nmb1_len;
 	ans=BigDec_max(number1,number2);
 	
 	if(ans==0)
 	{
 		nmb1_len=strlen(number1);
-		rem=(BigDec)malloc((nmb1_len+1)*sizeof(char));
+		rem=(C_BigDec)malloc((nmb1_len+1)*sizeof(char));
 		memcpy(rem,number1,nmb1_len+1);
 		return rem;
 	}
 	else if(ans==1)
 	{
-		rem=(BigDec)malloc(2*sizeof(char));
+		rem=(C_BigDec)malloc(2*sizeof(char));
 		rem[0]='0';
 		rem[1]='\0';
 		return rem;	
@@ -536,15 +552,15 @@ BigDec BigDec_mod(BigDec number1, BigDec number2) {
 	rem=BigDec_sub(number1,pom);
 	
 	free(res);
-	free(pom);
+	free(pom);	
 	
 	return rem;
 	
 }
 
-BigDec BigDec_gcd(BigDec number1, BigDec number2) {
+C_BigDec BigDec_gcd(C_BigDec number1, C_BigDec number2) {
 	
-	BigDec number3,helpPtr;
+	C_BigDec number3,helpPtr;
 	char ans;
 	
 	if(number1[0]=='-')
@@ -575,12 +591,12 @@ BigDec BigDec_gcd(BigDec number1, BigDec number2) {
 	return number1;
 }
 
-BigDec BigDec_fgcd(BigDec number1, BigDec number2) {
+C_BigDec BigDec_fgcd(C_BigDec number1, C_BigDec number2) {
 	
-	BigDec a,b,c;
+	C_BigDec a,b,c;
 
-	a=(BigDec)malloc((strlen(number1)+1) * sizeof(char));
-	b=(BigDec)malloc((strlen(number2)+1) * sizeof(char));
+	a=(C_BigDec)malloc((strlen(number1)+1) * sizeof(char));
+	b=(C_BigDec)malloc((strlen(number2)+1) * sizeof(char));
 	c=NULL;
 	
 	memcpy(a,number1,strlen(number1)+1);
@@ -596,12 +612,12 @@ BigDec BigDec_fgcd(BigDec number1, BigDec number2) {
 	return a;
 } 
 
-BigDec BigDec_genrfn(BigDec number) {
+C_BigDec BigDec_genrfn(C_BigDec number) {
 
-	BigDec nmb,gcd,helpPtr;
+	C_BigDec nmb,gcd,helpPtr;
 	gcd=NULL;
 
-	nmb=(BigDec)malloc(2*sizeof(char));
+	nmb=(C_BigDec)malloc(2*sizeof(char));
 	nmb[0]='3';
 	nmb[1]='\0';
 
@@ -623,21 +639,25 @@ BigDec BigDec_genrfn(BigDec number) {
 	return nmb;
 }
 
-BigDec BigDec_modularPower(BigDec number, BigDec exp, BigDec mod) {
+C_BigDec BigDec_modularPower(C_BigDec number, C_BigDec exp, C_BigDec mod) {
 	
 	return	BigDec_modularPowerAction(number, exp, mod);
 
 }
 
-BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod) {
+static C_BigDec BigDec_modularPowerAction(C_BigDec number, C_BigDec exp, C_BigDec mod) {
 	
 	if(strcmp(exp,"1")==0)
 	{
-		return BigDec_mod(number,mod);
+		return number;
 	}
-	else if(strcmp(BigDec_mod(exp,"2"),"0")==0)
+	
+	C_BigDec val=BigDec_mod(exp,"2");
+	
+	if(strcmp(val,"0")==0)
 	{
-		BigDec aux,tmp;
+		free(val);
+		C_BigDec aux,tmp;
 		
 		tmp=BigDec_div(exp,"2");
 		aux=BigDec_modularPowerAction(number, tmp, mod);
@@ -657,7 +677,8 @@ BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod) {
 	}
 	else
 	{
-		BigDec aux,tmp;
+		free(val);
+		C_BigDec aux,tmp;
 		
 		tmp=BigDec_div(exp,"2");
 		aux=BigDec_modularPowerAction(number, tmp, mod);
@@ -666,6 +687,7 @@ BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod) {
 		
 		tmp=aux;
 		aux=BigDec_mul(aux,aux);
+		
 		if(strcmp(tmp,number))
 		free(tmp);
 	
