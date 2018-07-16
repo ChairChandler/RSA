@@ -3,25 +3,22 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef char* BigDec;
-BigDec BigDec_add(BigDec number1, BigDec number2);
-BigDec BigDec_sub(BigDec number1, BigDec number2);
-BigDec BigDec_mul(BigDec number1, BigDec number2);
-BigDec BigDec_div(BigDec number1, BigDec number2);
-BigDec BigDec_pow(BigDec base, unsigned long long exp);
-BigDec BigDec_tradPow(BigDec base, unsigned long long exp);
-BigDec BigDec_powRes(BigDec base, unsigned long long exp);
-BigDec BigDec_mod(BigDec number1, BigDec number2);
-inline int BigDec_max(BigDec number1, BigDec number2);
-static inline BigDec BigDec_delZeroes(BigDec number1, size_t length);
-BigDec BigDec_gcd(BigDec number1, BigDec number2);
-BigDec BigDec_fgcd(BigDec number1, BigDec number2);
-BigDec BigDec_genrfn(BigDec number);
-static BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod);
-BigDec BigDec_modularPowerAction(BigDec number, BigDec exp, BigDec mod);
+typedef char* C_BigDec;
+C_BigDec BigDec_add(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_sub(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_mul(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_div(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_pow(C_BigDec base, unsigned long long exp);
+C_BigDec BigDec_tradPow(C_BigDec base, unsigned long long exp);
+C_BigDec BigDec_powRes(C_BigDec base, unsigned long long exp);
+C_BigDec BigDec_mod(C_BigDec number1, C_BigDec number2);
+inline int BigDec_max(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_gcd(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_fgcd(C_BigDec number1, C_BigDec number2);
+C_BigDec BigDec_genrfn(C_BigDec number);
+C_BigDec BigDec_modularPower(C_BigDec number, C_BigDec exp, C_BigDec mod);
 
-
-inline int BigDec_max(BigDec number1, BigDec number2) { //0-number1<number2 1-number1==number2 2-number1>number2
+inline int BigDec_max(C_BigDec number1, C_BigDec number2) { //0-number1<number2 1-number1==number2 2-number1>number2
 	
 	int i;
 	size_t nb1_len,nb2_len;
@@ -46,29 +43,4 @@ inline int BigDec_max(BigDec number1, BigDec number2) { //0-number1<number2 1-nu
 	return 1;
 }
 
-static inline BigDec BigDec_delZeroes(BigDec number, size_t length) {
-	
-	BigDec hlptr;
-	int i;
-	
-	if(number[0]=='0')
-	{	
-		i=0;
-		while(number[i]=='0'&&i!=length-1) i++;
-		hlptr=(BigDec)malloc((length+1-i)*sizeof(char));
-		memcpy(hlptr,number+i,length+1-i); 
-		free(number);
-		number=hlptr;
-	}
-	
-	if(strcmp(number,"")==0)
-	{
-		free(number);
-		number=(BigDec)malloc(2*sizeof(char));
-		number[0]='0';
-		number[1]='\0';
-	}
-	
-	return number;
-}
 #endif
